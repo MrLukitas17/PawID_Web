@@ -1417,7 +1417,7 @@ function showRecoveryStep(step,text){
 function openPasswordRecovery(){
   recoveryModal.hidden=false;
   recoveryModal.querySelectorAll?.('.password-field input')?.forEach(input=>{input.type='password';});
-  recoveryModal.querySelectorAll?.('.password-toggle').forEach(button=>{button.textContent='👁';button.setAttribute('aria-label','Mostrar contraseña');button.title='Mostrar contraseña';});recoveryEmail='';$('#password-recovery-form').reset();
+  recoveryModal.querySelectorAll?.('.password-toggle').forEach(button=>setEye(button,false));recoveryEmail='';$('#password-recovery-form').reset();
   showRecoveryStep(0,'Ingresa el correo de tu cuenta PawID. Te enviaremos un código de recuperación.');
 }
 $('#show-password-recovery').addEventListener('click',openPasswordRecovery);
@@ -3393,20 +3393,24 @@ renderHomes();
 $('#show-register')?.addEventListener('click',()=>{showView('registro');history.replaceState(null,'','#registro');});
 $('#show-login')?.addEventListener('click',()=>{showView('login');history.replaceState(null,'','#login');});
 
-// Botón "ojito" para ver u ocultar lo que se escribe en los campos de contraseña.
+// Botón con un ojo para ver u ocultar lo que se escribe en los campos de contraseña.
+const EYE_OPEN='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_CLOSED='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8s3.5 5 10 5 10-5 10-5"/><path d="M5 11.5 3.5 14M9 13l-.8 2.7M15 13l.8 2.7M19 11.5l1.5 2.5"/></svg>';
+function setEye(button,visible){
+  button.innerHTML=visible?EYE_OPEN:EYE_CLOSED;
+  const label=visible?'Ocultar contraseña':'Mostrar contraseña';
+  button.setAttribute('aria-label',label);button.title=label;
+}
 function addPasswordToggles(scope=document){
   scope.querySelectorAll('input[type="password"]:not([data-toggle-ready])').forEach(input=>{
     input.dataset.toggleReady='1';
     const wrap=document.createElement('span');wrap.className='password-field';
     input.parentNode.insertBefore(wrap,input);wrap.appendChild(input);
     const button=document.createElement('button');
-    button.type='button';button.className='password-toggle';button.textContent='👁';
-    button.setAttribute('aria-label','Mostrar contraseña');button.title='Mostrar contraseña';
+    button.type='button';button.className='password-toggle';setEye(button,false);
     button.addEventListener('click',()=>{
       const visible=input.type==='password';input.type=visible?'text':'password';
-      button.textContent=visible?'🙈':'👁';
-      button.setAttribute('aria-label',visible?'Ocultar contraseña':'Mostrar contraseña');button.title=button.getAttribute('aria-label');
-      input.focus();
+      setEye(button,visible);input.focus();
     });
     wrap.appendChild(button);
   });

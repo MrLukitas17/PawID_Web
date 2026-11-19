@@ -1927,6 +1927,7 @@ button { cursor: pointer; }
 
 /* Campos de contraseña con botón para mostrar u ocultar */
 .password-field{position:relative;display:block;width:100%}
-.password-field input{width:100%;padding-right:3rem}
-.password-toggle{position:absolute;top:50%;right:.6rem;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;font-size:1.1rem;line-height:1;padding:.35rem;border-radius:6px;opacity:.7}
+.password-field input{width:100%;padding-right:3rem;margin-bottom:0!important}
+.auth-form .password-field{margin-bottom:22px}
+.password-toggle{position:absolute;top:50%;right:.6rem;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;border:0;background:transparent;color:#5f6b6b;cursor:pointer;line-height:0;padding:.35rem;border-radius:6px;opacity:.75}
 .password-toggle:hover,.password-toggle:focus-visible{opacity:1;background:rgba(0,0,0,.06);outline:none}
