@@ -1415,7 +1415,9 @@ function showRecoveryStep(step,text){
   message.hidden=false;message.className='form-message';message.textContent=text;
 }
 function openPasswordRecovery(){
-  recoveryModal.hidden=false;recoveryEmail='';$('#password-recovery-form').reset();
+  recoveryModal.hidden=false;
+  recoveryModal.querySelectorAll?.('.password-field input')?.forEach(input=>{input.type='password';});
+  recoveryModal.querySelectorAll?.('.password-toggle').forEach(button=>{button.textContent='👁';button.setAttribute('aria-label','Mostrar contraseña');button.title='Mostrar contraseña';});recoveryEmail='';$('#password-recovery-form').reset();
   showRecoveryStep(0,'Ingresa el correo de tu cuenta PawID. Te enviaremos un código de recuperación.');
 }
 $('#show-password-recovery').addEventListener('click',openPasswordRecovery);
@@ -3386,6 +3388,30 @@ renderAdoptions();
 renderHomes();
 
 
+
+// Enlaces entre inicio de sesión y registro (BPMN "Inicio de Sesión" → "Crear Cuenta").
+$('#show-register')?.addEventListener('click',()=>{showView('registro');history.replaceState(null,'','#registro');});
+$('#show-login')?.addEventListener('click',()=>{showView('login');history.replaceState(null,'','#login');});
+
+// Botón "ojito" para ver u ocultar lo que se escribe en los campos de contraseña.
+function addPasswordToggles(scope=document){
+  scope.querySelectorAll('input[type="password"]:not([data-toggle-ready])').forEach(input=>{
+    input.dataset.toggleReady='1';
+    const wrap=document.createElement('span');wrap.className='password-field';
+    input.parentNode.insertBefore(wrap,input);wrap.appendChild(input);
+    const button=document.createElement('button');
+    button.type='button';button.className='password-toggle';button.textContent='👁';
+    button.setAttribute('aria-label','Mostrar contraseña');button.title='Mostrar contraseña';
+    button.addEventListener('click',()=>{
+      const visible=input.type==='password';input.type=visible?'text':'password';
+      button.textContent=visible?'🙈':'👁';
+      button.setAttribute('aria-label',visible?'Ocultar contraseña':'Mostrar contraseña');button.title=button.getAttribute('aria-label');
+      input.focus();
+    });
+    wrap.appendChild(button);
+  });
+}
+addPasswordToggles();
 
 const initialHash = location.hash.replace("#", "").split("?")[0];
 
