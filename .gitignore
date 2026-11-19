@@ -5,3 +5,4 @@ tests/browser-artifacts/
 supabase/functions/.env
 supabase/.temp/
 backups/
+debug.log

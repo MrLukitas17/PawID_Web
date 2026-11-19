@@ -78,3 +78,15 @@ Esta revisión pasó 62 comprobaciones de servidor y 47 de navegador en escritor
 ## Mi cuenta PawID y simulación de Seguridad
 
 El panel ahora se llama Mi cuenta PawID y tiene una pestaña Seguridad de demostración para cuentas manuales. No envía correos ni cambia credenciales: consultar SEGURIDAD_CUENTA_SIMULACION.md para el alcance y los puntos de integración futuros. Google conserva el correo de solo lectura. No se modificó el backend en este cambio.
+
+## Autenticación con Supabase Auth (19/11/2026)
+
+El sitio usa ahora las mismas cuentas que la aplicación móvil:
+
+- **Crear cuenta e iniciar sesión:** `pawid-api` valida con Supabase Auth (ya no compara SHA-256 en `usuarios`). El perfil de `usuarios` queda ligado con la columna `auth_id`.
+- **Google:** sin contraseña PawID adicional; la cuenta se liga a la que tenga el mismo correo (un correo = una cuenta).
+- **Recuperar contraseña:** código de 6 dígitos enviado por Supabase Auth (SMTP del proyecto). La función `password-recovery` y la tabla `password_reset_tokens` ya no se usan.
+- **PAWID_APP_URL** acepta varias direcciones separadas por coma.
+- `pawid-api` versión 4. Requiere haber ejecutado la Parte 1 (`20261118_1_auth.sql`) del repositorio de la app.
+
+Las cuentas antiguas de correo y contraseña deben registrarse de nuevo con el mismo correo: al hacerlo recuperan su perfil y sus mascotas.

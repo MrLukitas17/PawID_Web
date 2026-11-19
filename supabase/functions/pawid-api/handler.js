@@ -1,10 +1,14 @@
 // Núcleo sin dependencias para poder probar autorización y persistencia con un servidor simulado.
-export function createHandler({ admin, appUrl, bucket = 'mascotas-fotos', cryptoImpl = crypto, now = () => Date.now() }) {
-  const headers = {
-    'Access-Control-Allow-Origin': new URL(appUrl).origin,
+// authClient: fábrica de clientes con la clave pública (anon). Se usa solo para
+// verificar credenciales con Supabase Auth; las consultas usan `admin`.
+export function createHandler({ admin, authClient, appUrl, bucket = 'mascotas-fotos', cryptoImpl = crypto, now = () => Date.now() }) {
+  // PAWID_APP_URL admite varias direcciones separadas por coma (sitio publicado y local).
+  const origins = String(appUrl).split(',').map(url => url.trim()).filter(Boolean).map(url => new URL(url).origin);
+  const corsFor = req => ({
+    'Access-Control-Allow-Origin': origins.includes(req.headers.get('origin') || '') ? req.headers.get('origin') : origins[0],
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-pawid-session',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Content-Type': 'application/json'
-  };
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Content-Type': 'application/json', 'Vary': 'Origin'
+  });
   const digest = async value => Array.from(new Uint8Array(await cryptoImpl.subtle.digest('SHA-256', new TextEncoder().encode(value))))
     .map(x => x.toString(16).padStart(2, '0')).join('');
   const fail = (message, status = 400) => { throw Object.assign(new Error(message), { status }); };
@@ -48,7 +52,34 @@ export function createHandler({ admin, appUrl, bucket = 'mascotas-fotos', crypto
     if(!identity.app_metadata?.providers?.includes('google') && identity.app_metadata?.provider!=='google')fail('Inicia sesión con Google.',401);
     return identity;
   }
+  // Contraseña segura: mismos requisitos que la app móvil (RNF-03).
+  function validPassword(value) {
+    if (typeof value !== 'string' || value.length < 10 || value.length > 128 || !/[A-Z]/.test(value) || !/[a-z]/.test(value) ||
+      !/\d/.test(value) || !/[^A-Za-z0-9]/.test(value))
+      fail('La contraseña debe tener al menos 10 caracteres, con una mayúscula, una minúscula, un número y un carácter especial.');
+    return value;
+  }
+  // Un correo = una cuenta: liga el perfil de `usuarios` con la cuenta de Supabase Auth
+  // (misma lógica que vincular_usuario de la app). Conserva mascotas y publicaciones.
+  async function linkProfile(identity, nombre = '', telefono = '') {
+    const email = String(identity.email || '').trim().toLowerCase();
+    if (!identity.id || !email) fail('No se pudo verificar la cuenta.', 401);
+    let user = await run(admin.from('usuarios').select(profileColumns).eq('auth_id', identity.id).maybeSingle());
+    if (!user) {
+      const legacy = await run(admin.from('usuarios').select('id').eq('email', email).is('auth_id', null)
+        .order('created_at', {ascending: true}).limit(1));
+      if (legacy?.length) user = await run(admin.from('usuarios').update({auth_id: identity.id}).eq('id', legacy[0].id).select(profileColumns).single());
+    }
+    if (!user) {
+      const meta = identity.user_metadata || {};
+      user = await insertCompatible('usuarios', {email, auth_id: identity.id, password: '', foto_path: '',
+        proveedor: identity.app_metadata?.provider || 'email', telefono: String(telefono || meta.telefono || ''),
+        nombre: String(nombre || meta.nombre || meta.full_name || meta.name || email.split('@')[0]).trim().slice(0, 150)}, profileColumns);
+    }
+    return user;
+  }
   return async req => {
+    const headers = corsFor(req);
     const reply = (body, status = 200) => new Response(JSON.stringify(body), { status, headers });
     if (req.method === 'OPTIONS') return new Response('ok', {headers});
     if (!['GET', 'POST'].includes(req.method)) return reply({ok: false}, 405);
@@ -59,7 +90,7 @@ export function createHandler({ admin, appUrl, bucket = 'mascotas-fotos', crypto
       if (body.action === 'health') {
         const checks = [];
         for (const [table, columns] of [
-          ['usuarios', 'id,nombre,email,password,telefono,foto_path,proveedor'],
+          ['usuarios', 'id,nombre,email,telefono,foto_path,proveedor,auth_id'],
           ['mascotas', 'id,usuario_id,nombre,especie,raza,fecha_nacimiento,foto_path,fotos,peso_kg,vacunas,descripcion'],
           ['pawid_web_sessions', 'token_hash,owner_id,expires_at'],
           ['publicacion_adopcion', 'id,usuario_id,mascota_id,adoptado,fotos,nombre,descripcion,especie,tamano,telefono,contacto,region,comuna,raza,edad,esterilizado,vacunas,updated_at'],
@@ -71,44 +102,38 @@ export function createHandler({ admin, appUrl, bucket = 'mascotas-fotos', crypto
         const storage = await admin.storage.getBucket(bucket);
         checks.push({component: 'bucket', ready: !storage.error && storage.data?.public === true});
         const ready = checks.every(check => check.ready);
-        return reply({ok: ready, service: 'pawid-api', version: 3, ready, checks,
+        return reply({ok: ready, service: 'pawid-api', version: 4, ready, checks,
           message: ready ? 'PawID está preparado.' : 'La función responde, pero faltan tablas, columnas o la configuración del bucket. Revisa la guía de puesta en marcha.'}, ready ? 200 : 503);
       }
       if (body.action === 'register') {
+        // BPMN "Crear Cuenta": Supabase Auth verifica que el correo no esté en uso y crea la cuenta.
         const profile=body.profile||{};
-        if(typeof body.password!=='string' || body.password.length<6 || body.password.length>128)fail('La contraseña debe tener entre 6 y 128 caracteres.');
+        validPassword(body.password);
         const email=String(profile.email||'').trim().toLowerCase(), nombre=String(profile.nombre||'').trim(), telefono=String(profile.telefono||'');
         if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length>254 || !nombre || nombre.length>150 || (telefono && !/^9\d{8}$/.test(telefono)))fail('Revisa los datos de registro.');
-        const existing=await run(admin.from('usuarios').select('id').eq('email',email).or('proveedor.eq.email,proveedor.is.null').maybeSingle());
-        if(existing)fail('Ya existe una cuenta asociada a ese correo.',409);
-        await insertCompatible('usuarios',{email,nombre,telefono,password:await digest(body.password),proveedor:'email',foto_path:''},'id');
+        const {data,error}=await authClient().auth.signUp({email,password:body.password,options:{data:{nombre,telefono}}});
+        if(error){
+          if(error.code==='user_already_exists' || /already registered/i.test(error.message||''))fail('Ya existe una cuenta asociada a ese correo.',409);
+          if(error.code==='weak_password' || /password/i.test(error.message||''))fail('La contraseña no cumple los requisitos de seguridad.');
+          fail('No se pudo crear la cuenta. Intenta nuevamente.');
+        }
+        if(!data?.user || (Array.isArray(data.user.identities) && data.user.identities.length===0))fail('Ya existe una cuenta asociada a ese correo.',409);
+        await linkProfile(data.user,nombre,telefono);
         return reply({ok:true});
       }
-      if (body.action === 'google-profile' || body.action === 'google-password') {
-        const identity=await verifiedGoogle(req), email=identity.email.trim().toLowerCase();
-        let user=await run(admin.from('usuarios').select(profileColumns).eq('email',email).eq('proveedor','google').maybeSingle());
-        if(!user)user=await insertCompatible('usuarios',{email,nombre:String(identity.user_metadata?.full_name||identity.user_metadata?.name||email.split('@')[0]).slice(0,150),password:'GOOGLE',telefono:'',foto_path:'',proveedor:'google'},profileColumns);
-        const pending=await run(admin.from('usuarios').select('id').eq('id',user.id).eq('password','GOOGLE').maybeSingle());
-        if(body.action==='google-profile')return reply({ok:true,user,needsPassword:!!pending});
-        if(!pending)fail('La cuenta ya tiene contraseña. Inicia sesión nuevamente.',409);
-        if(typeof body.password!=='string' || body.password.length<6 || body.password.length>128)fail('La contraseña debe tener entre 6 y 128 caracteres.');
-        const nombre=String(body.nombre||user.nombre).trim().slice(0,150);
-        user=await run(admin.from('usuarios').update({nombre,password:await digest(body.password)}).eq('id',user.id).eq('password','GOOGLE').select(profileColumns).single());
-        return reply(await issueSession(user));
+      if (body.action === 'google-login') {
+        // Google ya verificó el correo: se liga a la cuenta existente con ese correo, sin contraseña adicional.
+        const identity=await verifiedGoogle(req);
+        return reply(await issueSession(await linkProfile(identity)));
       }
       if (body.action === 'login') {
+        // BPMN "Inicio de Sesión": las credenciales las valida Supabase Auth (misma cuenta que la app).
         if (typeof body.email !== 'string' || typeof body.password !== 'string' || body.password.length > 128) fail('Datos de acceso inválidos.');
+        if (body.provider === 'google') fail('Usa el botón "Continuar con Google".');
         const email = body.email.trim().toLowerCase();
-        let query = admin.from('usuarios').select('id,nombre,email,telefono,foto_path,proveedor').eq('email', email)
-          .eq('password', await digest(body.password));
-        if (body.provider === 'google') {
-          const identity=await verifiedGoogle(req);
-          if (identity.email.toLowerCase() !== email) fail('Verifica tu cuenta de Google.', 401);
-          query = query.eq('proveedor', 'google');
-        } else { query = query.or('proveedor.eq.email,proveedor.is.null'); }
-        const user = await run(query.maybeSingle());
-        if (!user) fail('Correo o contraseña incorrectos.', 401);
-        return reply(await issueSession(user));
+        const {data, error} = await authClient().auth.signInWithPassword({email, password: body.password});
+        if (error || !data?.user) fail('Correo o contraseña incorrectos.', 401);
+        return reply(await issueSession(await linkProfile(data.user)));
       }
       if (body.action === 'list') {
         const session = await sessionFor(req, false);

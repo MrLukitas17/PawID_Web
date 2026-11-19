@@ -64,10 +64,14 @@
       async savePublication(type,item){await remoteOnly();return (await request(type==='adoption'?'save':'save-home',{item})).item;},
       async deletePublication(type,id){await remoteOnly();return request(type==='adoption'?'delete':'delete-home',{id});},
       async changePublicationState(type,id,value){await remoteOnly();return (await request(type==='adoption'?'state':'state-home',type==='adoption'?{id,adopted:value}:{id,availability:value})).item;},
-      async recoveryStatus(){const {data,error}=await client.functions.invoke('password-recovery',{method:'GET'});return !error&&data?.ready===true;},
-      async recover(body){const {data,error}=await client.functions.invoke('password-recovery',{body});if(error||!data?.ok)throw new Error(body.action==='reset'?'El enlace venció, ya fue utilizado o no se pudo cambiar la contraseña.':'No se pudo enviar el enlace. Intenta más tarde.');return data;},
-      async googleProfile(){await remoteOnly();return request('google-profile');},
-      async googlePassword(password,nombre){await remoteOnly();const data=await request('google-password',{password,nombre});storage.setItem(SESSION,data.token);return setUser(data.user);}
+      // BPMN "Cambiar Contraseña" (igual que la app): correo registrado -> código al correo ->
+      // validar código -> nueva contraseña. Lo resuelve Supabase Auth con el SMTP del proyecto.
+      async recoveryStatus(){return true;},
+      async recoveryEmailExists(email){const {data,error}=await client.rpc('correo_registrado',{p_email:email});if(error)throw new Error('No pudimos consultar el correo. Intenta nuevamente.');return data===true;},
+      async recoveryRequest(email){const {error}=await client.auth.resetPasswordForEmail(email);if(error)throw new Error(/rate|seconds/i.test(error.message||'')?'Espera un momento antes de pedir otro código.':'No se pudo enviar el código. Intenta más tarde.');},
+      async recoveryVerify(email,code){const {error}=await client.auth.verifyOtp({email,token:code,type:'recovery'});if(error)throw new Error('El código no es válido o ya venció.');},
+      async recoveryReset(password){const {error}=await client.auth.updateUser({password});try{await client.auth.signOut({scope:'local'});}catch{}if(error)throw new Error(/same/i.test(error.message||'')?'La nueva contraseña debe ser distinta de la anterior.':'No se pudo cambiar la contraseña. Revisa los requisitos.');},
+      async googleLogin(){await remoteOnly();const data=await request('google-login');storage.setItem(SESSION,data.token);return setUser(data.user);}
     };
   }
   root.PawStore={create};

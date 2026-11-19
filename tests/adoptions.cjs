@@ -17,6 +17,7 @@ async function runAdoptionChecks(source, app) {
       select(value) {columns=value||'*';return q;}, eq(key, value) { filters.push(row => String(row[key]) === String(value)); return q; },
       gt(key, value) { filters.push(row => row[key] > value); return q; },
       or() { filters.push(row => row.proveedor === 'email' || row.proveedor == null); return q; },
+      is(key, value) { filters.push(row => (row[key] ?? null) === value); return q; },
       order() { return q; }, limit(count) {range = [0, count - 1]; return q;}, range(start, end) { range = [start, end]; return q; },
       single() { single = true; return q; }, maybeSingle() { single = true; return q; },
       insert(value) { op = 'insert'; values = value; return q; }, update(value) { op = 'update'; values = value; return q; },
@@ -51,7 +52,19 @@ async function runAdoptionChecks(source, app) {
   const TestURL=URL;
   class TestEncoder { encode(value) { return Uint8Array.from(Array.from(value).map(c => c.charCodeAt(0))); } }
   const create = new Function('URL', 'Response', 'TextEncoder', source.replace('export function', 'function') + ';return createHandler;')(TestURL, TestResponse, TestEncoder);
-  let handler = create({admin, appUrl: 'https://test', cryptoImpl: fakeCrypto, now: () => 1760000000000});
+  // Supabase Auth simulado: las contraseñas viven en Auth, no en la tabla usuarios.
+  const authUsers = {'owner@test.cl': {id: 'auth-owner', password: 'Password1!'}};
+  const authClient = () => ({auth: {
+    signInWithPassword: async ({email, password}) => authUsers[email] && authUsers[email].password === password
+      ? {data: {user: {id: authUsers[email].id, email, app_metadata: {provider: 'email'}, user_metadata: {}}}, error: null}
+      : {data: {}, error: {message: 'Invalid login credentials'}},
+    signUp: async ({email, password, options}) => {
+      if (authUsers[email]) return {data: null, error: {code: 'user_already_exists', message: 'User already registered'}};
+      authUsers[email] = {id: 'auth-' + email, password};
+      return {data: {user: {id: authUsers[email].id, email, identities: [{}], app_metadata: {provider: 'email'}, user_metadata: options?.data || {}}}, error: null};
+    }
+  }});
+  let handler = create({admin, authClient, appUrl: 'https://test', cryptoImpl: fakeCrypto, now: () => 1760000000000});
   const request = async (body, token = '', bearer = '') => {
     const response = await handler({method: 'POST', text: async () => JSON.stringify(body), headers: {get: key => key === 'x-pawid-session' ? token : key==='authorization'?bearer:''}});
     return {status: response.status, ...JSON.parse(response.body)};
@@ -78,10 +91,10 @@ async function runAdoptionChecks(source, app) {
   check(response.ok && db.publicacion_adopcion[0].adoptado, 'Propietario guarda estado adoptada');
   check((await request({action: 'list'})).items.length === 0, 'Adoptada desaparece del listado público');
   check((await request({action: 'list'}, owner)).items[0].adopted, 'Propietario conserva publicación adoptada en su listado');
-  handler = create({admin, appUrl: 'https://test', cryptoImpl: fakeCrypto, now: () => 1760000000000});
+  handler = create({admin, authClient, appUrl: 'https://test', cryptoImpl: fakeCrypto, now: () => 1760000000000});
   response = await request({action: 'state', id: 'post', adopted: false}, owner);
   check(response.ok && !db.publicacion_adopcion[0].adoptado, 'Reactivar guarda disponible en el servidor');
-  handler = create({admin, appUrl: 'https://test', cryptoImpl: fakeCrypto, now: () => 1760000000000});
+  handler = create({admin, authClient, appUrl: 'https://test', cryptoImpl: fakeCrypto, now: () => 1760000000000});
   response = await request({action: 'list'});
   check(response.items.some(row => row.id === 'post' && !row.adopted), 'Nueva instancia del servidor conserva reactivación pública');
   check(JSON.stringify(db.publicacion_adopcion[0].fotos) === before, 'Cambiar estado conserva datos y fotografías');
@@ -96,8 +109,9 @@ async function runAdoptionChecks(source, app) {
   response = await request({action: 'create-pet', update: petUpdate}, owner);
   check(response.ok && db.mascotas[1].usuario_id === 'owner', 'Registro de mascota usa propietario de la sesión');
   check((await request({action: 'login', email: 'owner@test.cl', password: 'wrong'})).status === 401, 'Login rechaza credenciales incorrectas');
-  response = await request({action: 'login', email: 'owner@test.cl', password: 'password'});
-  check(response.ok && /^[a-f0-9]{64}$/.test(response.token), 'Login crea sesión de servidor sin devolver hash de contraseña');
+  response = await request({action: 'login', email: 'owner@test.cl', password: 'Password1!'});
+  check(response.ok && /^[a-f0-9]{64}$/.test(response.token), 'Login valida con Supabase Auth y crea sesión de servidor');
+  check(db.usuarios[0].auth_id === 'auth-owner', 'Login liga el perfil existente con su cuenta de Supabase Auth');
   check((await request({action: 'session'}, response.token)).user.id === 'owner', 'Sesión verificada persiste entre consultas');
   check((await request({action:'save-home',item:{id:'home',name:'Acogida',availability:'Disponible',ownerId:'stranger'}},owner)).item.ownerId==='owner','Hogar usa propietario del servidor, no el enviado');
   check((await request({action:'list-homes'})).items.length===1,'Invitado ve hogares disponibles');
@@ -108,26 +122,27 @@ async function runAdoptionChecks(source, app) {
   await request({action:'state-home',id:'home',availability:'No disponible'},owner);
   check((await request({action:'list-homes'})).items.length===0,'Hogar no disponible desaparece de lista pública');
   check((await request({action:'list-homes'},owner)).items[0].availability==='No disponible','Propietario conserva hogares no disponibles');
-  handler=create({admin,appUrl:'https://test',cryptoImpl:fakeCrypto,now:()=>1760000000000});
+  handler=create({admin,authClient,appUrl:'https://test',cryptoImpl:fakeCrypto,now:()=>1760000000000});
   await request({action:'state-home',id:'home',availability:'Disponible'},owner);
   check((await request({action:'list-homes'})).items.length===1,'Reactivación persiste en una nueva instancia de servidor');
   await request({action:'delete-home',id:'home'},owner);
   check((await request({action:'list-homes'})).items.length===0,'Eliminar hogar persiste');
   check((await request({action:'delete-pet',id:'pet'},owner)).status===409,'No elimina mascota con publicaciones vinculadas');
-  check((await request({action:'register',profile:{email:'new@test.cl',nombre:'Nuevo'},password:'123'})).status===400,'Registro valida longitud de contraseña');
-  check((await request({action:'register',profile:{email:'new@test.cl',nombre:'Nuevo'},password:'123456'})).ok,'Registro de correo persiste en usuarios');
-  check((await request({action:'register',profile:{email:'new@test.cl',nombre:'Nuevo'},password:'123456'})).status===409,'Registro evita cuenta duplicada');
-  check((await request({action:'google-profile'})).status===401,'Google requiere token verificado por Supabase Auth');
-  googleIdentity={email:'google@test.cl',app_metadata:{provider:'google'},user_metadata:{full_name:'Google Tutor'}};
-  let google=await request({action:'google-profile'},'','Bearer google-token');
-  check(google.ok&&google.needsPassword&&google.user.email==='google@test.cl','Google crea cuenta desde la identidad verificada');
-  check((await request({action:'google-password',password:'123'},'','Bearer google-token')).status===400,'Google valida longitud de contraseña');
-  google=await request({action:'google-password',password:'password',nombre:'Tutor Google'},'','Bearer google-token');
-  check(google.ok&&google.token&&google.user.nombre==='Tutor Google','Google establece contraseña y emite sesión de servidor');
-  check((await request({action:'google-password',password:'another'},'','Bearer google-token')).status===409,'Google no sobrescribe contraseña ya configurada');
-  check((await request({action:'login',email:'google@test.cl',password:'password',provider:'google'},'','Bearer google-token')).ok,'Google existente conserva acceso con su contraseña');
-  googleIdentity={email:'wrong@test.cl',app_metadata:{provider:'google'}};
-  check((await request({action:'login',email:'google@test.cl',password:'password',provider:'google'},'','Bearer google-token')).status===401,'No usa una identidad Google para entrar en otra cuenta');
+  check((await request({action:'register',profile:{email:'new@test.cl',nombre:'Nuevo'},password:'123456'})).status===400,'Registro exige contraseña segura (RNF-03)');
+  check((await request({action:'register',profile:{email:'new@test.cl',nombre:'Nuevo',telefono:'912345678'},password:'Segura123!'})).ok,'Registro crea la cuenta en Supabase Auth');
+  const nuevo=db.usuarios.find(row=>row.email==='new@test.cl');
+  check(nuevo&&nuevo.auth_id==='auth-new@test.cl'&&nuevo.password===''&&nuevo.telefono==='912345678','Registro crea el perfil ligado y sin hash de contraseña');
+  check((await request({action:'register',profile:{email:'new@test.cl',nombre:'Nuevo'},password:'Segura123!'})).status===409,'Registro informa correo ya en uso');
+  check((await request({action:'login',email:'new@test.cl',password:'Segura123!'})).ok,'Cuenta registrada inicia sesión');
+  check((await request({action:'google-login'})).status===401,'Google requiere token verificado por Supabase Auth');
+  googleIdentity={id:'auth-owner',email:'owner@test.cl',app_metadata:{provider:'google',providers:['email','google']},user_metadata:{full_name:'Google Tutor'}};
+  let google=await request({action:'google-login'},'','Bearer google-token');
+  check(google.ok&&google.token&&google.user.id==='owner','Google entra a la misma cuenta del correo (un correo = una cuenta)');
+  check(db.usuarios.filter(row=>row.email==='owner@test.cl').length===1,'Google no duplica al usuario');
+  googleIdentity={id:'auth-google',email:'google@test.cl',app_metadata:{provider:'google'},user_metadata:{full_name:'Tutor Google'}};
+  google=await request({action:'google-login'},'','Bearer google-token');
+  check(google.ok&&google.user.email==='google@test.cl'&&google.user.nombre==='Tutor Google','Google crea la cuenta desde la identidad verificada, sin contraseña adicional');
+  check((await request({action:'login',email:'owner@test.cl',password:'Password1!',provider:'google'})).status===400,'Login con contraseña no acepta el proveedor Google');
   check((await request({action:'save-profile',profile:{nombre:'Intento',telefono:'912345678'}})).status===401,'Editar perfil requiere sesión');
   check((await request({action:'save-profile',profile:{nombre:' ',telefono:''}},owner)).status===400,'Perfil rechaza nombre vacío');
   check((await request({action:'save-profile',profile:{nombre:'Tutor',telefono:'123'}},owner)).status===400,'Perfil rechaza teléfono inválido');

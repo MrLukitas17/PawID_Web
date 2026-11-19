@@ -176,15 +176,9 @@ async function resumeGoogleLogin() {
       return;
     }
 
-    const meta = session.user.user_metadata || {};
-    const result = await findOrCreateGoogleUser({
-      email: normalize(session.user.email || ""),
-      nombre: (meta.full_name || meta.name || "").toString().trim(),
-      foto: (meta.avatar_url || meta.picture || "").toString()
-    });
-
-    googleUserRow = result.user;
-    openGooglePasswordModal(result.needsPassword ? "crear" : "verificar");
+    // Google ya verificó la identidad: el servidor liga la cuenta con el mismo correo
+    // (un correo = una cuenta, igual que la app) y emite la sesión de PawID.
+    finishGoogleLogin(await pawStore.googleLogin());
   } catch (err) {
     showGoogleMessage("Error con Google: " + (err.message || err));
     try { await supabaseClient.auth.signOut(); } catch { /* sin acción */ }

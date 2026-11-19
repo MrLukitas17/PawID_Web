@@ -1402,40 +1402,52 @@ $("#form-login").addEventListener("submit", async (e) => {
 });
 
 const recoveryModal=$('#password-recovery-modal');
-let recoveryToken=new URLSearchParams(location.hash.split('?')[1]||'').get('token')||'';
-async function openPasswordRecovery(){
-  recoveryModal.hidden=false;
-  const message=$('#recovery-message');message.hidden=false;message.className='form-message';message.textContent='Consultando disponibilidad…';
-  $('#recovery-submit').hidden=true;$('#recovery-new-fields').hidden=true;$('#recovery-email-label').hidden=true;
-  try{
-    if(!await pawStore.recoveryStatus()){message.textContent='La recuperación por correo todavía no está disponible. Contacta al equipo de PawID para recuperar tu acceso.';return;}
-    const resetting=!!recoveryToken;
-    $('#recovery-email-label').hidden=resetting;$('#recovery-email').required=!resetting;
-    $('#recovery-new-fields').hidden=!resetting;
-    $('#recovery-password').required=resetting;$('#recovery-password-confirm').required=resetting;
-    $('#recovery-submit').hidden=false;$('#recovery-submit').textContent=resetting?'Cambiar contraseña':'Enviar enlace';
-    message.textContent=resetting?'Ingresa y confirma tu nueva contraseña.':'Te enviaremos un enlace si existe una cuenta asociada al correo.';
-  }catch{message.textContent='No pudimos consultar el servicio. Intenta nuevamente.';}
+// Pasos del BPMN "Cambiar Contraseña": 0 correo, 1 código, 2 nueva contraseña.
+let recoveryStep=0,recoveryEmail='';
+const RECOVERY_RULES=[[/.{10,}/,'10 caracteres'],[/[A-Z]/,'una mayúscula'],[/[a-z]/,'una minúscula'],[/\d/,'un número'],[/[^A-Za-z0-9]/,'un carácter especial']];
+function showRecoveryStep(step,text){
+  recoveryStep=step;const message=$('#recovery-message');
+  $('#recovery-email-label').hidden=step!==0;$('#recovery-email').required=step===0;
+  $('#recovery-code-label').hidden=step!==1;$('#recovery-code').required=step===1;
+  $('#recovery-new-fields').hidden=step!==2;$('#recovery-password').required=step===2;$('#recovery-password-confirm').required=step===2;
+  $('#recovery-resend').hidden=step!==1;
+  $('#recovery-submit').hidden=step>2;$('#recovery-submit').textContent=['Enviar código','Validar código','Cambiar contraseña'][step]||'';
+  message.hidden=false;message.className='form-message';message.textContent=text;
+}
+function openPasswordRecovery(){
+  recoveryModal.hidden=false;recoveryEmail='';$('#password-recovery-form').reset();
+  showRecoveryStep(0,'Ingresa el correo de tu cuenta PawID. Te enviaremos un código de recuperación.');
 }
 $('#show-password-recovery').addEventListener('click',openPasswordRecovery);
 $('#password-recovery-close').addEventListener('click',()=>{recoveryModal.hidden=true;});
+async function sendRecoveryCode(){
+  await pawStore.recoveryRequest(recoveryEmail);
+  showRecoveryStep(1,'Enviamos un código a '+recoveryEmail+'. Revisa también la carpeta de spam.');
+}
+$('#recovery-resend').addEventListener('click',async()=>{try{await sendRecoveryCode();}catch(error){const m=$('#recovery-message');m.textContent=error.message;m.className='form-message error';}});
 $('#password-recovery-form').addEventListener('submit',async event=>{
   event.preventDefault();const button=$('#recovery-submit'),message=$('#recovery-message');if(button.disabled)return;button.disabled=true;
   try{
-    if(recoveryToken){
-      const password=$('#recovery-password').value;
-      if(password!==$('#recovery-password-confirm').value)throw new Error('Las contraseñas no coinciden.');
-      await pawStore.recover({action:'reset',token:recoveryToken,password});
-      recoveryToken='';history.replaceState(null,'',location.pathname+location.search+'#login');
-      pawStore.clear();currentUser=null;updateSessionUI();
-      message.textContent='Contraseña actualizada. Ya puedes iniciar sesión.';$('#recovery-submit').hidden=true;$('#recovery-new-fields').hidden=true;
+    if(recoveryStep===0){
+      recoveryEmail=normalize($('#recovery-email').value);
+      if(!await pawStore.recoveryEmailExists(recoveryEmail))throw new Error('Correo no encontrado.');
+      await sendRecoveryCode();
+    }else if(recoveryStep===1){
+      const code=$('#recovery-code').value.trim();
+      if(!/^\d{6,10}$/.test(code))throw new Error('Ingresa el código que recibiste.');
+      await pawStore.recoveryVerify(recoveryEmail,code);
+      showRecoveryStep(2,'Código validado. Ingresa tu nueva contraseña.');
     }else{
-      await pawStore.recover({action:'request',email:$('#recovery-email').value.trim()});
-      message.textContent='Si existe una cuenta para ese correo, recibirás un enlace de recuperación.';
+      const password=$('#recovery-password').value;
+      const missing=RECOVERY_RULES.filter(([rule])=>!rule.test(password)).map(([,label])=>label);
+      if(missing.length)throw new Error('La contraseña necesita: '+missing.join(', ')+'.');
+      if(password!==$('#recovery-password-confirm').value)throw new Error('Las contraseñas no coinciden.');
+      await pawStore.recoveryReset(password);
+      pawStore.clear();currentUser=null;updateSessionUI();
+      showRecoveryStep(3,'Contraseña actualizada correctamente. Ya puedes iniciar sesión con tu nueva contraseña.');
     }
-    message.className='form-message';
-  }catch(error){message.textContent=error.message;message.className='form-message error';}
-  finally{button.disabled=false;message.hidden=false;}
+  }catch(error){message.textContent=error.message;message.className='form-message error';message.hidden=false;}
+  finally{button.disabled=false;}
 });
 
 function normalizePhone(value) {
@@ -3381,4 +3393,4 @@ const initialHash = location.hash.replace("#", "").split("?")[0];
 
 if (["login","mascotas","adopciones","hogares","registro"].includes(initialHash)) showView(initialHash);
 
-if(recoveryToken)openPasswordRecovery();
+

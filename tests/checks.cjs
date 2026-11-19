@@ -65,11 +65,12 @@ async function runPawidChecks(sources) {
   check(sources.registration.includes('petStore.createPet') && !sources.registration.includes('petAPI'), 'Registro usa el sistema compatible');
   const recoveryNodes={};
   const recoveryCode=app.slice(app.indexOf('const recoveryModal='),app.indexOf('function normalizePhone'));
-  const recovery=new Function('$','pawStore','location','URLSearchParams',recoveryCode+';return openPasswordRecovery;')(
-    selector=>recoveryNodes[selector]||(recoveryNodes[selector]=element()),{recoveryStatus:async()=>false},{hash:''},URLSearchParams);
-  await recovery();
-  check(recoveryNodes['#recovery-message'].textContent.includes('todavía no está disponible'),'Recuperación informa disponibilidad del servidor');
-  check(recoveryNodes['#recovery-submit'].hidden&&recoveryNodes['#recovery-new-fields'].hidden,'Sin correo configurado no solicita nueva contraseña');
+  const recovery=new Function('$','pawStore','normalize',recoveryCode+';return openPasswordRecovery;')(
+    selector=>recoveryNodes[selector]||(recoveryNodes[selector]=element()),{},v=>v);
+  recoveryNodes['#password-recovery-form']=Object.assign(element(),{reset(){}});
+  recovery();
+  check(recoveryNodes['#recovery-message'].textContent.includes('código de recuperación'),'Recuperación pide el correo para enviar el código');
+  check(!recoveryNodes['#recovery-email-label'].hidden&&recoveryNodes['#recovery-new-fields'].hidden,'Nueva contraseña solo se pide después de validar el código');
   return results;
 }
 if (typeof module !== 'undefined') {

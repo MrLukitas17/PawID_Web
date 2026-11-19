@@ -371,7 +371,7 @@
 
 
 
-            <input id="register-password" type="password" placeholder="••••••" minlength="6" required>
+            <input id="register-password" type="password" placeholder="••••••••••" minlength="10" maxlength="128" required title="Mínimo 10 caracteres, con una mayúscula, una minúscula, un número y un carácter especial">
 
 
 
@@ -1497,11 +1497,14 @@
       <p class="modal-description">Información para recuperar el acceso a tu cuenta.</p>
       <form id="password-recovery-form" class="publication-form">
         <label id="recovery-email-label">CORREO<input id="recovery-email" type="email" autocomplete="email" required></label>
+        <label id="recovery-code-label" hidden>CÓDIGO DE RECUPERACIÓN<input id="recovery-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" pattern="[0-9]{6,10}"></label>
         <div id="recovery-new-fields" hidden>
-          <label>NUEVA CONTRASEÑA<input id="recovery-password" type="password" minlength="6" maxlength="128" autocomplete="new-password"></label>
-          <label>CONFIRMAR CONTRASEÑA<input id="recovery-password-confirm" type="password" minlength="6" maxlength="128" autocomplete="new-password"></label>
+          <label>NUEVA CONTRASEÑA<input id="recovery-password" type="password" minlength="10" maxlength="128" autocomplete="new-password"></label>
+          <label>CONFIRMAR CONTRASEÑA<input id="recovery-password-confirm" type="password" minlength="10" maxlength="128" autocomplete="new-password"></label>
+          <p class="modal-description">Mínimo 10 caracteres, con una mayúscula, una minúscula, un número y un carácter especial.</p>
         </div>        <p id="recovery-message" class="form-message" hidden></p>
-        <button id="recovery-submit" class="btn btn-green" type="submit">Cambiar contraseña</button>
+        <button id="recovery-submit" class="btn btn-green" type="submit">Enviar código</button>
+        <button id="recovery-resend" class="btn" type="button" hidden>Reenviar código</button>
       </form>
     </div>
   </div>
@@ -1596,13 +1599,13 @@
   <script src="/js/config.js?v=15"></script>
   <script src="/js/photos.js?v=12"></script>
   <script src="/js/store-legacy.js?v=1"></script>
-  <script src="/js/store.js?v=17"></script>
+  <script src="/js/store.js?v=18"></script>
   <script src="/js/account-security.js?v=1"></script>
   <script src="/js/admin-entry.js?v=1"></script>
-  <script src="/js/app.js?v=21"></script>
+  <script src="/js/app.js?v=22"></script>
 
 
-  <script src="/js/google-auth.js?v=15"></script>
+  <script src="/js/google-auth.js?v=16"></script>
 
 
 
