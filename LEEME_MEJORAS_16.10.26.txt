@@ -1,0 +1,40 @@
+PawID - Mejoras del block de notas (16-10-2026)
+
+Se trabajó sobre la última versión estable enviada por el equipo (PawID_WEB_UNIDO_06.10.26).
+El login de Google NO se modificó en esta versión, porque se dejó pendiente para otro día.
+
+CAMBIOS REALIZADOS
+1. Adopciones
+- Tamaño pasa a ser opcional al publicar una mascota.
+- Los filtros son opcionales y ahora Comuna puede usarse sin seleccionar primero una Región.
+- Se agrega "Mis publicaciones" para administrar publicaciones propias.
+- Una publicación propia puede marcarse como adoptada y luego reactivarse.
+- Fotos de publicación en formato visual 4:4 (cuadrado).
+- Se pueden seleccionar hasta 5 fotos para una publicación.
+- La ficha de adopción incorpora carrusel de fotografías.
+- Se ajusta el margen/posición de la X de cierre.
+- Se aclara el campo "Nombre de la mascota" en la publicación.
+
+2. Hogares temporales
+- Se agrega ficha de detalle/descripción.
+- Se agrega "Mis publicaciones".
+- Las publicaciones propias muestran también hogares no disponibles para poder gestionarlos.
+- Comuna puede filtrarse sin seleccionar primero una Región.
+
+3. Mis Mascotas
+- Se agregan Peso, Vacunas al día y Descripción/observaciones al registro.
+- Los nuevos datos aparecen en la ficha y pueden editarse.
+- Se mantiene compatibilidad si Supabase aún no tiene esas columnas, pero para que los datos se sincronicen entre dispositivos se recomienda ejecutar SUPABASE_MIGRACION_MASCOTAS.sql.
+
+IMPORTANTE - SUPABASE
+Entrar a Supabase > SQL Editor y ejecutar el archivo:
+SUPABASE_MIGRACION_MASCOTAS.sql
+
+Sin esa migración, la mascota se puede registrar, pero los campos nuevos se guardan localmente en el navegador como respaldo de compatibilidad.
+
+PARA LEVANTAR LA WEB
+Desde la carpeta PawID/PawID:
+python -m http.server 5500
+
+Luego abrir:
+http://localhost:5500/templates/index.html

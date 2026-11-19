@@ -1,0 +1,10 @@
+[functions.password-recovery]
+verify_jwt = false
+
+[functions.pawid-api]
+verify_jwt = false
+
+# Configuración local de la nueva función. No despliega ni modifica las anteriores.
+# Además del filtro de la plataforma, el handler ejecuta getUser(jwt) y verifica pawid_admins.
+[functions.pawid-admin]
+verify_jwt = true

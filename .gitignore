@@ -1,0 +1,7 @@
+tests/browser-artifacts/
+.env
+.env.*
+!.env.example
+supabase/functions/.env
+supabase/.temp/
+backups/

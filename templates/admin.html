@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Acceso y panel de administración de PawID.">
+  <title>Administración | PawID</title>
+  <link rel="stylesheet" href="/css/styles.css?v=14">
+  <link rel="stylesheet" href="/css/admin.css?v=1">
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
+  <script defer src="/js/config.js?v=15"></script>
+  <script defer src="/js/photos.js?v=12"></script>
+  <script defer src="/js/admin-entry.js?v=1"></script>
+  <script defer src="/js/admin.js?v=3"></script>
+</head>
+<body class="admin-page">
+  <a class="admin-skip" href="#admin-main">Saltar al contenido</a>
+  <header class="admin-topbar">
+    <a class="admin-brand" href="/templates/index.html" aria-label="PawID, volver al sitio"><span class="admin-brand-mark" aria-hidden="true">🐾</span><span>PawID<small>Administración</small></span></a>
+    <div class="admin-topbar-actions"><a href="/templates/index.html">Volver a PawID <span aria-hidden="true">↗</span></a><button id="admin-menu-toggle" class="admin-menu-toggle" type="button" aria-expanded="false" aria-controls="admin-sidebar" hidden>☰ Menú</button></div>
+  </header>
+
+  <main id="admin-main" tabindex="-1">
+    <section id="admin-login" class="admin-login-layout" aria-labelledby="admin-login-title">
+      <div class="admin-login-intro">
+        <span class="admin-eyebrow">CUIDAMOS NUESTRA COMUNIDAD</span>
+        <h1>Un espacio para<br>seguir cuidando.</h1>
+        <p>Revisa las publicaciones, acompaña las adopciones y comparte información útil para quienes forman parte de PawID.</p>
+        <div class="admin-login-art" aria-hidden="true"><span>🐾</span><div><strong>Una comunidad.<br>Muchas vidas que cuidar.</strong><small>PawID · Tenencia responsable</small></div></div>
+      </div>
+      <div class="admin-login-card">
+        <span class="admin-pill">ACCESO RESTRINGIDO</span>
+        <h2 id="admin-login-title">Acceso administrativo</h2>
+        <p id="admin-login-description">Ingresa con tu cuenta autorizada para continuar.</p>
+        <p id="admin-login-status" class="admin-inline-status" role="status">Comprobando sesión…</p>
+        <div id="admin-login-message" class="form-message" role="alert" hidden></div>
+        <form id="admin-login-form">
+          <fieldset id="admin-login-fields" disabled>
+            <label for="admin-email">Correo electrónico</label>
+            <input id="admin-email" name="email" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="tu@correo.cl" required>
+            <label for="admin-password">Contraseña</label>
+            <div class="admin-password-wrap"><input id="admin-password" name="password" type="password" autocomplete="current-password" required><button id="admin-password-toggle" type="button" aria-label="Mostrar contraseña" aria-pressed="false">Mostrar</button></div>
+            <button id="admin-login-submit" class="btn btn-green" type="submit">Ingresar al panel <span aria-hidden="true">→</span></button>
+          </fieldset>
+        </form>
+        <p class="admin-login-note">Este acceso es exclusivo para la administración de PawID.</p>
+      </div>
+    </section>
+
+    <div id="admin-app" class="admin-layout" hidden>
+      <button id="admin-menu-backdrop" class="admin-menu-backdrop" type="button" aria-label="Cerrar menú" hidden></button>
+      <aside id="admin-sidebar" class="admin-sidebar" aria-label="Panel administrativo">
+        <p class="admin-sidebar-label">PANEL DE ADMINISTRACIÓN</p>
+        <nav class="admin-nav" aria-label="Secciones del administrador">
+          <button type="button" data-section="dashboard" aria-current="page"><span aria-hidden="true">▦</span> Dashboard</button>
+          <button type="button" data-section="adopciones"><span aria-hidden="true">♡</span> Adopciones</button>
+          <button type="button" data-section="hogares"><span aria-hidden="true">⌂</span> Hogares temporales</button>
+          <button type="button" data-section="articulos"><span aria-hidden="true">▤</span> Artículos</button>
+        </nav>
+        <div class="admin-account"><span class="admin-account-avatar" aria-hidden="true">P</span><div><strong>Administración PawID</strong><span id="admin-account-email"></span></div></div>
+        <button id="admin-logout" type="button" class="admin-logout"><span aria-hidden="true">↪</span> Cerrar sesión</button>
+      </aside>
+      <div class="admin-workspace">
+        <div class="admin-workspace-heading"><div><p class="admin-eyebrow">ADMINISTRACIÓN · PAWID</p><h1 id="admin-section-title" tabindex="-1">Resumen general</h1><p id="admin-section-description">Una mirada a las publicaciones de la comunidad.</p></div><button id="admin-refresh" class="btn btn-outline" type="button"><span aria-hidden="true">↻</span> Actualizar</button></div>
+        <div id="admin-feedback" class="admin-feedback" role="status" aria-live="polite" hidden></div>
+        <div id="admin-loading" class="admin-loading" role="status" hidden><span class="admin-spinner" aria-hidden="true"></span><span>Cargando información…</span></div>
+        <div id="admin-load-error" class="admin-load-error" hidden><p id="admin-load-error-text"></p><button id="admin-retry" class="btn btn-outline" type="button">Volver a intentar</button></div>
+
+        <section id="admin-dashboard" aria-label="Estadísticas generales" hidden>
+          <div class="admin-stats-grid">
+            <article class="admin-stat-card"><span class="admin-stat-icon admin-stat-coral" aria-hidden="true">♡</span><h2>Adopciones</h2><strong id="stat-adoptions">—</strong><div class="admin-stat-breakdown"><span>Activas <b id="stat-adoptions-active">—</b></span><span>Inactivas <b id="stat-adoptions-inactive">—</b></span></div></article>
+            <article class="admin-stat-card"><span class="admin-stat-icon" aria-hidden="true">⌂</span><h2>Hogares temporales</h2><strong id="stat-homes">—</strong><div class="admin-stat-breakdown"><span>Disponibles <b id="stat-homes-available">—</b></span><span>No disponibles <b id="stat-homes-unavailable">—</b></span><span id="stat-homes-unknown-wrap" hidden>Sin estado <b id="stat-homes-unknown">—</b></span></div></article>
+            <article class="admin-stat-card"><span class="admin-stat-icon admin-stat-coral" aria-hidden="true">▤</span><h2>Artículos</h2><strong id="stat-articles">—</strong><div class="admin-stat-breakdown"><span>Publicados <b id="stat-articles-published">—</b></span><span>Borradores <b id="stat-articles-drafts">—</b></span></div></article>
+          </div>
+          <p id="admin-updated-at" class="admin-updated-at"></p>
+          <div class="admin-shortcuts"><article><span class="admin-eyebrow">UNA OPORTUNIDAD DE ENCUENTRO</span><h2>Acompaña las adopciones</h2><p>Revisa las fichas y las publicaciones que comparte la comunidad.</p><button class="btn btn-green" type="button" data-section="adopciones">Revisar adopciones →</button></article><article><span class="admin-eyebrow">INFORMAR TAMBIÉN ES CUIDAR</span><h2>Comparte información útil</h2><p>Prepara artículos y mantén actualizado el contenido informativo.</p><button class="btn btn-outline" type="button" data-section="articulos">Gestionar artículos →</button></article></div>
+        </section>
+
+        <section id="admin-records-view" aria-labelledby="admin-section-title" hidden>
+          <div class="admin-records-toolbar">
+            <button id="admin-new-article" class="btn btn-green" type="button" hidden>+ Crear artículo</button>
+            <label class="admin-page-size" for="admin-page-size">Por página<select id="admin-page-size"><option value="12">12</option><option value="25">25</option><option value="50">50</option></select></label>
+          </div>
+          <p id="admin-record-count" class="admin-record-count"></p>
+          <div id="admin-records"></div>
+          <div id="admin-empty" class="empty-state admin-empty" hidden><span aria-hidden="true">🐾</span><h2 id="admin-empty-title">Todavía no hay registros</h2><p id="admin-empty-description"></p></div>
+          <nav id="admin-pagination" class="admin-pagination" aria-label="Paginación de registros" hidden><button id="admin-page-prev" class="btn btn-outline" type="button">← Anterior</button><span id="admin-page-label" aria-live="polite"></span><button id="admin-page-next" class="btn btn-outline" type="button">Siguiente →</button></nav>
+        </section>
+      </div>
+    </div>
+    <noscript><p class="admin-noscript">Activa JavaScript para iniciar sesión y utilizar la administración de PawID.</p></noscript>
+  </main>
+
+  <dialog id="admin-detail-dialog" class="admin-dialog admin-detail-dialog" aria-labelledby="admin-detail-title"><div class="admin-dialog-heading"><div><p id="admin-detail-type" class="admin-eyebrow"></p><h2 id="admin-detail-title"></h2></div><button id="admin-detail-close" class="admin-dialog-close" type="button" aria-label="Cerrar ficha">×</button></div><div id="admin-detail-body"></div><div class="admin-dialog-actions"><button id="admin-detail-done" class="btn btn-outline" type="button">Cerrar ficha</button></div></dialog>
+
+  <dialog id="admin-confirm-dialog" class="admin-dialog admin-confirm-dialog" aria-labelledby="admin-confirm-title" aria-describedby="admin-confirm-description"><div class="admin-dialog-heading"><div><p class="admin-eyebrow">CONFIRMAR ELIMINACIÓN</p><h2 id="admin-confirm-title">¿Eliminar este registro?</h2></div><button id="admin-confirm-close" class="admin-dialog-close" type="button" aria-label="Cancelar eliminación">×</button></div><p id="admin-confirm-description"></p><p class="admin-confirm-note">Esta acción no se puede deshacer.</p><div id="admin-confirm-error" class="form-message error" role="alert" hidden></div><div class="admin-dialog-actions"><button id="admin-confirm-cancel" class="btn btn-outline" type="button">Cancelar</button><button id="admin-confirm-delete" class="btn admin-btn-danger" type="button">Sí, eliminar</button></div></dialog>
+
+  <dialog id="admin-article-dialog" class="admin-dialog admin-article-dialog" aria-labelledby="admin-article-title"><div class="admin-dialog-heading"><div><p class="admin-eyebrow">INFORMACIÓN DEL SITIO</p><h2 id="admin-article-title">Crear artículo</h2></div><button id="admin-article-close" class="admin-dialog-close" type="button" aria-label="Cerrar editor">×</button></div><form id="admin-article-form"><fieldset id="admin-article-fields"><label for="admin-article-name">Título<input id="admin-article-name" name="titulo" maxlength="180" required></label><label for="admin-article-content">Contenido<textarea id="admin-article-content" name="contenido" rows="8" maxlength="30000" required></textarea></label><label for="admin-article-image">URL de imagen <span class="admin-optional">(opcional)</span><input id="admin-article-image" name="imagen_url" type="url" maxlength="2048" placeholder="https://ejemplo.cl/imagen.jpg"></label><img id="admin-article-preview" class="admin-article-preview" alt="Vista previa de la imagen del artículo" referrerpolicy="no-referrer" hidden><label class="admin-checkbox" for="admin-article-published"><input id="admin-article-published" name="publicado" type="checkbox"><span>Publicado<span class="admin-field-help">Desmárcalo para guardar como borrador.</span></span></label></fieldset><div id="admin-article-error" class="form-message error" role="alert" hidden></div><div class="admin-dialog-actions"><button id="admin-article-cancel" class="btn btn-outline" type="button">Cancelar</button><button id="admin-article-save" class="btn btn-green" type="submit">Guardar artículo</button></div></form></dialog>
+</body>
+</html>

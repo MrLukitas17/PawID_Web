@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+
+
+
+<html lang="es">
+
+
+
+<head>
+
+
+
+  <meta charset="UTF-8">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+  <title>PawID | Gestión responsable de mascotas</title>
+
+
+
+  <link rel="stylesheet" href="/css/styles.css?v=14">
+
+
+
+  <link rel="stylesheet" href="/css/news.css?v=3">
+</head>
+  
+
+
+<body>
+
+
+
+  <header class="topbar">
+
+
+
+    <div class="topbar-inner">
+
+
+
+      <button class="brand" type="button" data-view="inicio" aria-label="Ir al inicio">
+
+
+
+        <span class="brand-mark">🐾</span>
+
+
+
+      </button>
+
+
+
+      <nav class="main-nav" aria-label="Navegación principal">
+
+
+
+        <button class="nav-link active" type="button" data-view="inicio">Inicio</button>
+
+
+
+        <span class="nav-separator">|</span>
+
+
+
+        <button class="nav-link" type="button" data-view="mascotas">Mis Mascotas</button>
+
+
+
+        <span class="nav-separator">|</span>
+
+
+
+        <button class="nav-link" type="button" data-view="adopciones">Adopciones</button>
+
+
+
+        <span class="nav-separator">|</span>
+
+
+
+        <button class="nav-link" type="button" data-view="hogares">Hogares Temporales</button>
+
+
+
+      </nav>
+
+
+
+      <div class="topbar-actions">
+
+
+
+        <button id="account-button" class="account-button" type="button" aria-label="Cuenta de usuario">♙</button>
+
+
+
+        <div id="account-menu" class="account-menu" hidden>
+
+
+
+          <p id="account-name" class="account-name">Invitado</p>
+
+
+
+          <button id="account-login" type="button">Iniciar sesión</button>
+
+
+
+          <button id="account-edit-profile" type="button" hidden>Mi cuenta</button>
+
+          <button id="account-logout" type="button" hidden>Cerrar sesión</button>
+
+
+
+        </div>
+
+
+
+      </div>
+
+
+
+    </div>
+
+
+
+  </header>
+
+
+
+  <main>
+
+
+
+    <!-- INICIO / LANDING -->
+
+
+
+    <section id="view-inicio" class="view-section active-view">
+
+
+
+      <div id="welcome-panel" class="welcome-panel welcome-information">
+        <div>
+          <span class="eyebrow">TENENCIA RESPONSABLE · PAWID</span>
+          <h1>PawID: conoce más, cuida mejor a tu mascota.</h1>
+          <p>Compartir tu vida con una mascota implica compromiso, buen trato y cuidados diarios. Conoce la tenencia responsable y la importancia de identificar y registrar a tu compañero en nuestra aplicación.</p>
+          <a class="btn btn-green welcome-guide-link" href="/templates/conocer-mas.html">Conocer más <span aria-hidden="true">→</span></a>
+        </div>
+        <aside class="welcome-care" aria-labelledby="welcome-care-title">
+          <span class="care-symbol" aria-hidden="true">🐾</span>
+          <h2 id="welcome-care-title">Su bienestar empieza contigo</h2>
+          <ul>
+            <li><span aria-hidden="true">01</span><div><strong>Cuida cada día</strong><p>Alimentación, agua, compañía y un entorno seguro.</p></div></li>
+            <li><span aria-hidden="true">02</span><div><strong>Identifica y registra</strong><p>Su identidad y tus datos ayudan a vincularlos.</p></div></li>
+            <li><span aria-hidden="true">03</span><div><strong>Convive con respeto</strong><p>Buen trato y cuidado de los espacios compartidos.</p></div></li>
+          </ul>
+        </aside>
+      </div>
+      <section class="pet-guides" aria-labelledby="pet-guides-title">
+        <div class="pet-guides-heading">
+          <span class="eyebrow">INFÓRMATE Y CUIDA</span>
+          <h2 id="pet-guides-title">Ser responsable también es estar informado</h2>
+          <p>Conoce la Ley Cholito y descubre cómo inscribir a tu compañero en el Registro Nacional de Mascotas.</p>
+        </div>
+        <div class="pet-guides-grid">
+          <article class="pet-guide">
+            <div class="guide-poster guide-poster-law">
+              <span class="guide-pill">LEY N.º 21.020 · LEY CHOLITO</span>
+              <h3>Tres ejes de la<br>tenencia responsable</h3>
+              <ol class="guide-pillars">
+                <li><span class="pillar-number">01</span><div><strong>Control de la población animal</strong><p>Infórmate sobre esterilización y evita la reproducción sin planificación.</p></div></li>
+                <li><span class="pillar-number">02</span><div><strong>Identificación y registro</strong><p>Identifica a tu mascota e inscríbela en el registro correspondiente.</p></div></li>
+                <li><span class="pillar-number">03</span><div><strong>Educación de la ciudadanía</strong><p>Promueve el buen trato, los cuidados y la convivencia responsable.</p></div></li>
+              </ol>
+              <div class="guide-pets" aria-hidden="true">🐕 🐈 🐕‍🦺 🐈‍⬛</div>
+              <span class="guide-poster-foot">Su bienestar empieza con tus cuidados.</span>
+            </div>
+            <div class="guide-caption"><span class="guide-category">TENENCIA RESPONSABLE</span><h3>Una ley para protegerlos</h3><p>Alimentación, atención veterinaria, buen trato y cuidado del entorno forman parte de una tenencia responsable.</p><a href="https://www.chileatiende.gob.cl/fichas/51436-ley-de-tenencia-responsable-de-mascotas-y-animales-de-compania-ley-cholito" target="_blank" rel="noopener noreferrer">Conocer la Ley Cholito <span aria-hidden="true">↗</span><span class="guide-sr"> (abre otra pestaña)</span></a><small>Fuente: ChileAtiende · Ley N.º 21.020</small></div>
+          </article>
+          <article class="pet-guide">
+            <div class="guide-poster guide-poster-register">
+              <span class="guide-pill">IDENTIFICACIÓN Y REGISTRO</span>
+              <h3><span>Registro Nacional</span><br><span>de Mascotas</span></h3>
+              <p class="register-intro">Un paso importante para cuidar a perros y gatos y vincularlos con su responsable.</p>
+              <div class="register-animals" aria-hidden="true"><span>🐈</span><span>🐕</span></div>
+              <div class="register-steps"><div><b>1</b><span>Identifica<br>a tu mascota</span></div><div><b>2</b><span>Reúne sus<br>antecedentes</span></div><div><b>3</b><span>Solicita<br>su inscripción</span></div></div>
+              <span class="guide-poster-foot">Consulta los requisitos en el sitio oficial.</span>
+            </div>
+            <div class="guide-caption"><span class="guide-category">REGISTRO NACIONAL</span><h3>Su identidad, tu responsabilidad</h3><p>Revisa los documentos necesarios y las opciones de inscripción en línea o a través de tu municipalidad.</p><a href="https://www.registratumascota.cl/" target="_blank" rel="noopener noreferrer">Ir al Registro Nacional <span aria-hidden="true">↗</span><span class="guide-sr"> (abre otra pestaña)</span></a><small>Fuente: Registro Nacional de Mascotas</small></div>
+          </article>
+        </div>
+        <p class="guides-disclaimer">Contenido educativo de PawID basado en fuentes oficiales. Registrar una mascota en PawID es complementario a su inscripción en el Registro Nacional.</p>
+      </section>
+      <div class="responsible-strip">
+
+
+
+        <div>
+
+
+
+          <span class="eyebrow">TENENCIA RESPONSABLE</span>
+
+
+
+          <h3>Cuidar también es mantener información clara, actualizada y disponible.</h3>
+
+
+
+        </div>
+
+
+
+        <p>Identificación, antecedentes básicos, adopción responsable y apoyo mediante hogares temporales forman parte del alcance definido para el proyecto.</p>
+
+
+
+      </div>
+
+
+
+    </section>
+
+
+
+    <!-- INICIO DE SESIÓN -->
+
+
+
+    <section id="view-login" class="view-section">
+
+
+
+      <div class="auth-screen">
+
+
+
+        <div class="auth-card">
+
+
+
+          <h1>Iniciar Sesión</h1>
+
+
+
+          <p class="auth-subtitle">inicia para continuar</p>
+
+
+
+          <form id="form-login" class="auth-form">
+
+
+
+            <label for="login-email">CORREO</label>
+
+
+
+            <input id="login-email" type="email" placeholder="juanperez@gmail.com" required>
+
+            <p id="login-admin-notice" class="form-message" role="status" aria-live="polite" hidden>Este correo utiliza el acceso administrativo. Continúa para ingresar tu contraseña en el apartado de administración.</p>
+
+
+
+            <label for="login-password">CONTRASEÑA</label>
+
+
+
+            <input id="login-password" type="password" placeholder="••••••" required>
+
+
+
+            <p id="auth-error" class="form-message error" hidden></p>
+
+
+
+            <button id="btn-login" class="btn btn-green" type="submit">Iniciar Sesión</button>
+
+
+
+          
+
+
+          
+
+
+
+          <button id="btn-google" class="btn btn-google" type="button">
+
+
+
+            <span class="google-g">G</span>
+
+
+
+            <span>Iniciar sesión con Google</span>
+
+
+
+          </button>
+
+
+
+          <p class="switch-auth">¿No tienes cuenta? <button id="show-register" type="button">Regístrate</button></p>
+          <button id="show-password-recovery" class="auth-text-button" type="button">¿Olvidaste tu contraseña?</button></form>
+
+
+
+        </div>
+
+
+
+      </div>
+
+
+
+    </section>
+
+
+
+    <!-- REGISTRO DE USUARIO -->
+
+
+
+    <section id="view-registro" class="view-section">
+
+
+
+      <div class="register-layout">
+
+
+
+        <div class="register-card">
+
+
+
+          <h1>Crear una nueva cuenta</h1>
+
+
+
+          <p class="auth-subtitle">¿ya estás registrado? <button id="show-login" type="button">inicia</button></p>
+
+
+
+          <form id="form-register" class="auth-form compact">
+
+
+
+            <label for="register-name">NOMBRE</label>
+
+
+
+            <input id="register-name" type="text" placeholder="Juan Perez" required>
+
+
+
+            <label for="register-email">CORREO</label>
+
+
+
+            <input id="register-email" type="email" placeholder="juanperez@gmail.com" required>
+
+
+
+            <label for="register-password">CONTRASEÑA</label>
+
+
+
+            <input id="register-password" type="password" placeholder="••••••" minlength="6" required>
+
+
+
+            <label for="register-phone">TELÉFONO</label>
+
+
+
+            <input id="register-phone" type="tel" placeholder="+56 9 1234 5678">
+
+
+
+            <p id="register-message" class="form-message" hidden></p>
+
+
+
+            <button id="btn-register" class="btn btn-green" type="submit">Crear cuenta</button>
+
+
+
+          </form>
+
+
+
+        </div>
+
+
+
+      </div>
+
+
+
+    </section>
+
+
+
+    <!-- MIS MASCOTAS / PANEL WEB -->
+
+
+
+    <section id="view-mascotas" class="view-section">
+
+
+
+      <div class="section-shell">
+
+
+
+        <div class="section-heading split-heading">
+
+
+
+          <div>
+
+
+
+            <span class="eyebrow">PANEL DE ADMINISTRACIÓN</span>
+
+
+
+            <h1>Mis Mascotas</h1>
+
+
+
+            <p>Consulta y administra los perfiles asociados a tu cuenta.</p>
+
+
+
+          </div>
+
+
+
+          <a id="new-pet-link" class="btn btn-green" href="/templates/registrar-mascota.html" hidden>+ Registrar mascota</a>
+
+
+
+        </div>
+
+
+
+        <div id="mascotas-auth-warning" class="empty-state">
+
+
+
+          <div class="empty-icon">🐾</div>
+
+
+
+          <h3>Inicia sesión para administrar tus mascotas</h3>
+
+
+
+          <p>El panel usa la misma información almacenada en Supabase.</p>
+
+
+
+          <button class="btn btn-green" type="button" data-view="login">Ir al inicio de sesión</button>
+
+
+
+        </div>
+
+
+
+        <div id="mascotas-panel" hidden>
+
+
+
+          <div id="mensaje-alerta-mascota" class="success-banner" hidden></div>
+
+
+
+          <div id="lista-mascotas" class="pet-grid"></div>
+
+
+
+        </div>
+
+
+
+      </div>
+
+
+
+    </section>
+
+
+
+    <!-- ADOPCIONES -->
+
+
+
+    <section id="view-adopciones" class="view-section">
+
+
+
+      <div class="section-shell notices-shell">
+
+
+
+        <div class="section-heading centered-heading">
+
+
+
+          <span class="eyebrow">PUBLICACIONES</span>
+
+
+
+          <h1>Avisos de Adopción</h1>
+
+
+
+          <p>Busca mascotas disponibles y contacta a la persona responsable de la publicación.</p>
+
+
+
+        </div>
+
+
+
+        <div class="toolbar">
+
+
+
+          <div class="filter-row adoption-filters">
+
+
+
+            <label class="filter-search">
+
+
+
+              Buscar
+
+
+
+              <div class="filter-search-box">
+
+
+
+                <input id="adoption-search" type="search" placeholder="Nombre, raza...">
+
+
+
+                <span aria-hidden="true">⌕</span>
+
+
+
+              </div>
+
+
+
+            </label>
+
+
+
+            <label>Especie
+
+
+
+              <select id="adoption-species-filter">
+
+
+
+                <option value="">Todas</option>
+
+
+
+                <option value="perro">Perro</option>
+
+
+
+                <option value="gato">Gato</option>
+
+
+
+                <option value="conejo">Conejo</option>
+
+
+
+                <option value="hámster">Hámster</option>
+
+
+
+                <option value="cobayo">Cobayo</option>
+
+
+
+                <option value="hurón">Hurón</option>
+
+
+
+                <option value="erizo africano">Erizo africano</option>
+
+
+
+                <option value="ave">Ave</option>
+
+
+
+                <option value="reptil">Reptil</option>
+
+
+
+                <option value="pez">Pez</option>
+
+
+
+                <option value="otro">Otro</option>
+
+
+
+              </select>
+
+
+
+            </label>
+
+
+
+            <label>Raza
+
+
+
+              <input id="adoption-breed-filter" type="search" placeholder="Ej. Mestizo">
+
+
+
+            </label>
+
+
+
+            <label>Tamaño
+
+
+
+              <select id="adoption-size-filter">
+
+
+
+                <option value="">Todos</option>
+
+
+
+                <option value="pequeño">Pequeño</option>
+
+
+
+                <option value="mediano">Mediano</option>
+
+
+
+                <option value="grande">Grande</option>
+
+
+
+              </select>
+
+
+
+            </label>
+
+
+
+            <label>Región
+
+              <select id="adoption-region-filter">
+
+                <option value="">Todas las regiones</option>
+
+              </select>
+
+            </label>
+
+
+
+            <label>Comuna
+
+              <select id="adoption-comuna-filter" disabled>
+
+                <option value="">Todas las comunas</option>
+
+              </select>
+
+            </label>
+
+
+
+          </div>
+
+
+
+          <div class="toolbar-actions">
+            <button id="adoption-show-all" class="btn btn-outline publication-scope-btn active" type="button">Todas</button>
+            <button id="adoption-show-mine" class="btn btn-outline publication-scope-btn" type="button" hidden>Mis publicaciones</button>
+            <button id="new-adoption" class="btn btn-coral" type="button" hidden>Publicar mascota</button>
+          </div>
+
+
+
+        </div>
+
+
+
+        <button id="import-browser-data" class="btn btn-outline" type="button" hidden>Importar datos de este navegador</button>
+          <p id="adoption-status-message" class="form-message" role="status" hidden></p>
+        <div id="adoption-list" class="adoption-grid"></div>
+
+
+
+      </div>
+
+
+
+    </section>
+
+
+
+    <!-- HOGARES TEMPORALES -->
+
+
+
+    <section id="view-hogares" class="view-section">
+
+
+
+      <div class="section-shell notices-shell">
+
+
+
+        <div class="section-heading centered-heading">
+
+
+
+          <span class="eyebrow">APOYO TEMPORAL</span>
+
+
+
+          <h1>Hogares Temporales</h1>
+
+
+
+          <p>Consulta publicaciones disponibles y filtra según ubicación, especie y tamaño aceptado.</p>
+
+
+
+        </div>
+
+
+
+        <div class="toolbar">
+
+
+
+          <div class="filter-row home-filters">
+
+
+
+            <label class="filter-search">
+
+
+
+              Buscar
+
+
+
+              <div class="filter-search-box">
+
+
+
+                <input id="home-search" type="search" placeholder="Buscar hogar...">
+
+
+
+                <span aria-hidden="true">⌕</span>
+
+
+
+              </div>
+
+
+
+            </label>
+
+
+
+            <label>Especie
+
+
+
+              <select id="home-species-filter">
+
+
+
+                <option value="">Todas</option>
+
+
+
+                <option value="perro">Perro</option>
+
+
+
+                <option value="gato">Gato</option>
+
+
+
+                <option value="conejo">Conejo</option>
+
+
+
+                <option value="hámster">Hámster</option>
+
+
+
+                <option value="cobayo">Cobayo</option>
+
+
+
+                <option value="hurón">Hurón</option>
+
+
+
+                <option value="erizo africano">Erizo africano</option>
+
+
+
+                <option value="ave">Ave</option>
+
+
+
+                <option value="reptil">Reptil</option>
+
+
+
+                <option value="pez">Pez</option>
+
+
+
+                <option value="otro">Otro</option>
+
+
+
+              </select>
+
+
+
+            </label>
+
+
+
+            <label>Tamaño
+
+
+
+              <select id="home-size-filter">
+
+
+
+                <option value="">Todos</option>
+
+
+
+                <option value="pequeño">Pequeño</option>
+
+
+
+                <option value="mediano">Mediano</option>
+
+
+
+                <option value="grande">Grande</option>
+
+
+
+              </select>
+
+
+
+            </label>
+
+
+
+            <label>Región
+
+              <select id="home-region-filter">
+
+                <option value="">Todas las regiones</option>
+
+              </select>
+
+            </label>
+
+
+
+            <label>Comuna
+
+              <select id="home-comuna-filter" disabled>
+
+                <option value="">Todas las comunas</option>
+
+              </select>
+
+            </label>
+
+
+
+          </div>
+
+
+
+          <div class="toolbar-actions">
+            <button id="home-show-all" class="btn btn-outline publication-scope-btn active" type="button">Todos</button>
+            <button id="home-show-mine" class="btn btn-outline publication-scope-btn" type="button">Mis publicaciones</button>
+            <button id="new-home" class="btn btn-coral" type="button">Ofrecer hogar temporal</button>
+          </div>
+
+
+
+        </div>
+
+
+
+        <p id="home-status-message" class="form-message" role="status" hidden></p>
+          <div id="temporary-home-list" class="temporary-grid"></div>
+
+
+
+      </div>
+
+
+
+    </section>
+
+
+
+  </main>
+
+
+
+  <!-- MODAL GENÉRICO DE PUBLICACIONES -->
+
+
+
+  <div id="publication-modal" class="modal-overlay" hidden>
+
+
+
+    <div class="modal-box publication-modal-box">
+
+
+
+      <header class="publication-modal-header">
+      <button class="modal-close" id="publication-close" type="button" aria-label="Cerrar">×</button>
+
+
+
+      <h2 id="publication-title">Nueva publicación</h2>
+      </header>
+
+
+
+      <p id="publication-description" class="modal-description"></p>
+
+
+
+      <form id="publication-form" class="publication-form">
+
+
+
+        <input id="publication-type" type="hidden">
+
+        <div id="adoption-pet-selector" style="display:none;">
+          <label>Mascota registrada
+  <select id="publication-pet">
+    <option value="">Selecciona una mascota</option>
+  </select>
+</label>
+
+          <p id="publication-pet-message" class="form-message" hidden></p>
+
+          <div id="publication-pet-preview" hidden style="margin-top:10px; padding:12px; border:1px solid #e7e1dc; border-radius:10px; background:#faf8f6;">
+            <div style="display:flex; gap:12px; align-items:center;">
+              <div id="publication-pet-photo-wrap" style="width:72px; height:72px; border-radius:10px; overflow:hidden; background:#efeded; display:grid; place-items:center; font-size:30px;">🐾</div>
+              <div>
+                <strong id="publication-pet-preview-name">Mascota</strong>
+                <div id="publication-pet-preview-info" style="margin-top:4px; color:#777; font-size:12px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <label><span id="publication-name-label">Título / nombre</span>
+
+
+
+          <input id="publication-name" type="text" required>
+
+
+
+        </label>
+
+
+
+        <label>Descripción
+
+
+
+          <textarea id="publication-text" rows="4" required></textarea>
+
+
+
+        </label>
+
+
+
+        <div class="two-cols">
+
+
+
+          <label>Especie
+
+
+
+            <select id="publication-species" required>
+
+
+
+              <option value="Perro">Perro</option>
+
+
+
+              <option value="Gato">Gato</option>
+
+
+
+              <option value="Conejo">Conejo</option>
+
+
+
+              <option value="Hámster">Hámster</option>
+
+
+
+              <option value="Cobayo">Cobayo</option>
+
+
+
+              <option value="Hurón">Hurón</option>
+
+
+
+              <option value="Erizo africano">Erizo africano</option>
+
+
+
+              <option value="Ave">Ave</option>
+
+
+
+              <option value="Reptil">Reptil</option>
+
+
+
+              <option value="Pez">Pez</option>
+
+
+
+              <option value="Otro">Otro</option>
+
+
+
+            </select>
+
+
+
+          </label>
+
+
+
+          <label><span id="publication-size-label">Tamaño</span>
+
+
+
+            <select id="publication-size">
+
+
+
+              <option value="">No especificar</option>
+
+
+
+              <option value="Pequeño">Pequeño</option>
+
+
+
+              <option value="Mediano">Mediano</option>
+
+
+
+              <option value="Grande">Grande</option>
+
+
+
+            </select>
+
+
+
+          </label>
+
+
+
+        </div>
+
+
+
+        <div id="adoption-extra-fields" class="adoption-extra-fields">
+
+
+
+          <div class="two-cols">
+
+
+
+            <label>Raza
+
+
+
+              <input id="publication-breed" type="text" placeholder="Ej. Mestizo">
+
+
+
+            </label>
+
+
+
+            <label>Edad
+
+
+
+              <input id="publication-age" type="text" placeholder="Ej. 8 meses">
+
+
+
+            </label>
+
+
+
+          </div>
+
+
+
+          <div class="two-cols">
+
+
+
+            <label>Esterilizado/a
+
+
+
+              <select id="publication-sterilized">
+
+
+
+                <option value="No informado">No informado</option>
+
+
+
+                <option value="Sí">Sí</option>
+
+
+
+                <option value="No">No</option>
+
+
+
+              </select>
+
+
+
+            </label>
+
+
+
+            <label>Vacunas al día (opcional)
+              <select id="publication-vaccines">
+                <option value="">Seleccionar</option>
+                <option value="Sí">Sí</option>
+                <option value="No">No</option>
+              </select>
+            </label>
+
+
+
+          </div>
+
+
+
+          <label>Fotos de la mascota (opcional)
+
+
+
+            <input id="publication-image" type="file" accept="image/*" multiple><small>Hasta 8 fotos de máximo 10 MB cada una.</small><div id="publication-photo-previews" class="photo-previews"></div>
+            <small class="field-help">Puedes seleccionar hasta 8 fotos. Se mostrarán como carrusel en la ficha.</small>
+
+
+
+          </label>
+
+
+
+        </div>
+
+
+
+        <div class="two-cols publication-location-fields">
+
+          <label>Región
+
+            <select id="publication-region" required>
+
+              <option value="">Selecciona una región</option>
+
+            </select>
+
+          </label>
+
+
+
+          <label>Comuna
+
+            <select id="publication-comuna" required disabled>
+
+              <option value="">Selecciona una comuna</option>
+
+            </select>
+
+          </label>
+
+        </div>
+
+        <label>WhatsApp de contacto
+          <input
+            id="publication-phone"
+            type="tel"
+            inputmode="tel"
+            placeholder="+56 9 1234 5678"
+            required
+          >
+        </label>
+        
+       
+
+
+        <label id="availability-label">Disponibilidad
+
+
+
+          <select id="publication-availability">
+
+
+
+            <option value="Disponible">Disponible</option>
+
+
+
+            <option value="No disponible">No disponible</option>
+
+
+
+          </select>
+
+
+
+        </label>
+
+
+
+        <button class="btn btn-green" type="submit">Guardar publicación</button>
+
+
+
+      </form>
+
+
+
+    </div>
+
+
+
+  </div>
+
+
+
+  <!-- MODAL CONTACTO -->
+
+
+
+  <div id="contact-modal" class="modal-overlay" hidden>
+
+
+
+    <div class="modal-box contact-box">
+
+
+
+      <button class="modal-close" id="contact-close" type="button" aria-label="Cerrar">×</button>
+
+
+
+      <div class="contact-icon">💬</div>
+
+
+
+      <h2 id="contact-title">Contactar</h2>
+
+
+
+      <p id="contact-text">Contacta directamente con la persona responsable de la publicación.</p>
+
+
+
+      <button class="btn btn-green" id="contact-ok" type="button">Abrir WhatsApp</button>
+
+
+
+    </div>
+
+
+
+  </div>
+
+
+
+  <!-- MODAL EDITAR MASCOTA (mantiene CRUD existente) -->
+
+
+
+  <div id="modal-editar" class="modal-overlay" hidden>
+
+
+
+    <div class="modal-box">
+
+
+
+      <button class="modal-close" id="btn-cancelar-modal" type="button" aria-label="Cerrar">×</button>
+
+
+
+      <h2>Modificar Mascota</h2>
+
+
+
+      <form id="form-editar-mascota" class="publication-form">
+
+
+
+        <input type="hidden" id="edit-id">
+
+
+
+        <label>Nombre<input type="text" id="edit-nombre" required></label>
+
+
+
+        <label>Especie
+
+
+
+          <select id="edit-especie" required>
+
+
+
+            <option value="Perro">Perro</option>
+
+
+
+            <option value="Gato">Gato</option>
+
+
+
+            <option value="Conejo">Conejo</option>
+
+
+
+            <option value="Hámster">Hámster</option>
+
+
+
+            <option value="Cobayo">Cobayo</option>
+
+
+
+            <option value="Hurón">Hurón</option>
+
+
+
+            <option value="Erizo africano">Erizo africano</option>
+
+
+
+            <option value="Ave">Ave</option>
+
+
+
+            <option value="Reptil">Reptil</option>
+
+
+
+            <option value="Pez">Pez</option>
+
+
+
+            <option value="Otro">Otro</option>
+
+
+
+          </select>
+
+
+
+        </label>
+
+
+
+        <label>Raza<input type="text" id="edit-raza" required></label>
+
+
+
+        <label>Fecha de nacimiento<input type="date" id="edit-fecha"></label>
+
+        <div class="two-cols">
+          <label>Peso (kg)<input type="number" id="edit-peso" min="0" step="0.1" placeholder="Ej. 8.5"></label>
+          <label>Vacunas al día
+            <select id="edit-vacunas">
+              <option value="">No informado</option>
+              <option value="Sí">Sí</option>
+              <option value="No">No</option>
+            </select>
+          </label>
+        </div>
+
+        <label>Descripción / observaciones
+          <textarea id="edit-descripcion" rows="3" placeholder="Características, cuidados o información relevante"></textarea>
+        </label>
+
+
+
+        <label>Teléfono de contacto<input type="text" id="edit-contacto"></label>
+
+
+
+        <label>Fotografías (opcional)<input type="file" id="edit-foto" accept="image/*" multiple></label>
+        <p class="field-help">Hasta 8 fotos de máximo 10 MB. Las fotos actuales se conservan salvo que las quites.</p>
+        <div id="edit-photo-previews" class="photo-previews"></div>
+
+
+
+        <button id="btn-guardar-modal" class="btn btn-green" type="submit">Guardar cambios</button>
+
+
+
+      </form>
+
+
+
+    </div>
+
+
+
+  </div>
+
+
+
+
+  <!-- MODAL RECUPERAR CONTRASEÑA -->
+
+  <div id="password-recovery-modal" class="modal-overlay" hidden>
+    <div class="modal-box password-recovery-box">
+      <button class="modal-close" id="password-recovery-close" type="button" aria-label="Cerrar">×</button>
+      <h2>Recuperar contraseña</h2>
+      <p class="modal-description">Información para recuperar el acceso a tu cuenta.</p>
+      <form id="password-recovery-form" class="publication-form">
+        <label id="recovery-email-label">CORREO<input id="recovery-email" type="email" autocomplete="email" required></label>
+        <div id="recovery-new-fields" hidden>
+          <label>NUEVA CONTRASEÑA<input id="recovery-password" type="password" minlength="6" maxlength="128" autocomplete="new-password"></label>
+          <label>CONFIRMAR CONTRASEÑA<input id="recovery-password-confirm" type="password" minlength="6" maxlength="128" autocomplete="new-password"></label>
+        </div>        <p id="recovery-message" class="form-message" hidden></p>
+        <button id="recovery-submit" class="btn btn-green" type="submit">Cambiar contraseña</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL GOOGLE: CREAR / VERIFICAR CONTRASEÑA -->
+
+  <div id="google-password-modal" class="modal-overlay" hidden>
+    <div class="modal-box">
+      <button class="modal-close" id="google-password-close" type="button" aria-label="Cerrar">×</button>
+
+      <h2 id="google-password-title">Crea tu contraseña</h2>
+      <p id="google-password-description" class="modal-description"></p>
+
+      <form id="google-password-form" class="publication-form">
+        <label id="google-name-label">Nombre completo
+          <input id="google-name" type="text" autocomplete="name">
+        </label>
+
+        <label>Contraseña
+          <input id="google-password" type="password" minlength="6" required>
+        </label>
+
+        <label id="google-confirm-label">Confirmar contraseña
+          <input id="google-password-confirm" type="password" minlength="6">
+        </label>
+
+        <p id="google-password-message" class="form-message error" hidden></p>
+
+        <button id="google-password-submit" class="btn btn-green" type="submit">Guardar y entrar</button>
+        <button id="google-password-cancel" class="btn btn-outline" type="button">Cancelar y usar otra cuenta</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="profile-modal" class="modal-overlay" hidden>
+    <section class="modal-box profile-panel" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+      <button id="profile-close" class="modal-close" type="button" aria-label="Cerrar Mi cuenta">×</button>
+      <header class="profile-panel-heading"><h2 id="profile-title">Mi cuenta</h2><p>Personaliza tu foto y mantén tus datos de contacto al día.</p></header>
+      <div class="account-tabs" role="tablist" aria-label="Secciones de tu cuenta">
+        <button id="account-personal-tab" type="button" role="tab" aria-selected="true" aria-controls="account-personal-pane">Información personal</button>
+        <button id="account-security-tab" type="button" role="tab" aria-selected="false" aria-controls="account-security-pane" tabindex="-1">Seguridad</button>
+      </div>
+      <div id="account-personal-pane" class="profile-panel-grid" role="tabpanel" aria-labelledby="account-personal-tab">
+        <aside class="profile-summary" aria-label="Foto y resumen del perfil">
+          <div id="profile-avatar" class="profile-avatar" aria-label="Vista previa de tu foto"></div>
+          <h3 id="profile-summary-name"></h3><p id="profile-summary-email"></p>
+          <input id="profile-photo" class="profile-file-input" type="file" accept="image/jpeg,image/png,image/webp" tabindex="-1" aria-label="Seleccionar foto de perfil">
+          <button id="profile-photo-select" class="btn btn-green" type="button">Agregar foto</button>
+          <button id="profile-photo-remove" class="profile-photo-remove" type="button">Quitar foto</button>
+          <p class="profile-photo-help">JPG, PNG o WebP · Máximo 5 MB.<br>La foto se actualiza al guardar los cambios.</p>
+        </aside>
+        <form id="profile-form" class="publication-form profile-details">
+          <div class="profile-section-heading"><h3>Información personal</h3><p>Así te identificas en PawID.</p></div>
+          <label>Nombre<input id="profile-name" type="text" autocomplete="name" maxlength="150" required></label>
+          <label>Correo de tu cuenta<input id="profile-email" type="email" autocomplete="email" readonly></label>
+          <label>Teléfono<input id="profile-phone" type="tel" autocomplete="tel-national" inputmode="tel" maxlength="16" placeholder="9 1234 5678"></label>
+          <p id="profile-message" class="form-message" role="status" aria-live="polite" hidden></p>
+          <div class="profile-form-actions"><button id="profile-cancel" class="btn btn-outline" type="button">Cancelar</button><button id="profile-save" class="btn btn-green" type="submit">Guardar cambios</button></div>
+        </form>
+      </div>
+      <section id="account-security-pane" class="account-security-pane" role="tabpanel" aria-labelledby="account-security-tab" hidden>
+        <div id="account-google-lock" class="account-google-lock" hidden><span class="guide-pill">CUENTA DE GOOGLE</span><h3>Tu correo está vinculado a Google</h3><p>El correo de esta cuenta no se puede editar ni desvincular desde PawID. Puedes seguir actualizando tu foto, nombre y teléfono en Información personal.</p></div>
+        <div id="account-manual-security">
+          <div class="account-simulation-note"><strong>Vista de prueba</strong><p>Este flujo es una simulación: no se envían correos ni se cambia tu correo o contraseña reales.</p></div>
+          <h3>Protege el acceso a tu cuenta</h3><p class="account-security-intro">Antes de cambiar tus datos de acceso, primero debes verificar que el correo de la cuenta te pertenece.</p>
+          <div id="security-options" class="security-options"><button id="security-email-choice" type="button"><strong>Cambiar correo</strong><span>Verifica tu cuenta antes de elegir otro correo.</span></button><button id="security-password-choice" type="button"><strong>Cambiar contraseña</strong><span>Confirma tu identidad para crear una nueva contraseña.</span></button></div>
+          <form id="security-code-form" class="publication-form security-step" hidden>
+            <h4 id="security-code-title">Verifica tu identidad</h4><p id="security-code-description"></p>
+            <p class="security-demo-code">Código de prueba: <strong>123456</strong></p>
+            <label>Código de verificación<input id="security-code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required placeholder="6 dígitos"></label>
+            <div class="profile-form-actions"><button id="security-back" class="btn btn-outline" type="button">Volver</button><button class="btn btn-green" type="submit">Verificar código</button></div>
+          </form>
+          <form id="security-change-form" class="publication-form security-step" hidden>
+            <p class="security-verified">Identidad verificada en esta simulación</p>
+            <label id="security-new-email-label" hidden>Nuevo correo<input id="security-new-email" type="email" autocomplete="email" maxlength="254"></label>
+            <div id="security-password-fields" hidden><label>Nueva contraseña<input id="security-new-password" type="password" autocomplete="new-password" minlength="8" maxlength="128"></label><label>Confirmar nueva contraseña<input id="security-confirm-password" type="password" autocomplete="new-password" minlength="8" maxlength="128"></label><p class="profile-photo-help">Usa al menos 8 caracteres.</p></div>
+            <div class="profile-form-actions"><button id="security-change-cancel" class="btn btn-outline" type="button">Cancelar</button><button class="btn btn-green" type="submit">Simular cambio</button></div>
+          </form>
+          <p id="security-message" class="form-message" role="status" aria-live="polite" hidden></p>
+        </div>
+      </section>
+    </section>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+
+
+  <script src="/js/config.js?v=15"></script>
+  <script src="/js/photos.js?v=12"></script>
+  <script src="/js/store-legacy.js?v=1"></script>
+  <script src="/js/store.js?v=17"></script>
+  <script src="/js/account-security.js?v=1"></script>
+  <script src="/js/admin-entry.js?v=1"></script>
+  <script src="/js/app.js?v=21"></script>
+
+
+  <script src="/js/google-auth.js?v=15"></script>
+
+
+
+</body>
+
+
+
+</html>

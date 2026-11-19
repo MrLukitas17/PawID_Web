@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrar mascota | PawID</title>
+  <link rel="stylesheet" href="/css/styles.css?v=12">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/templates/index.html" aria-label="Inicio"><span class="brand-mark">🐾</span></a>
+      <nav class="main-nav">
+        <a class="nav-link" style="text-decoration:none" href="/templates/index.html">Inicio</a>
+        <span class="nav-separator">|</span>
+        <a class="nav-link active" style="text-decoration:none" href="/templates/index.html#mascotas">Mis Mascotas</a>
+      </nav>
+      <div></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="register-layout pet-registration-layout">
+      <div id="register-auth-warning" class="empty-state register-auth-warning" hidden>
+        <div class="empty-icon">🐾</div>
+        <h3>Inicia sesión para registrar a tu mascota</h3>
+        <p>Para crear un perfil de mascota debes ingresar primero a tu cuenta de PawID.</p>
+        <a class="btn btn-green" href="/templates/index.html#login">Iniciar sesión</a>
+      </div>
+
+      <div id="register-pet-card" class="register-card" style="width:min(520px,100%)" hidden>
+        <span class="eyebrow">PANEL DE ADMINISTRACIÓN</span>
+        <h1 style="color:#111">Registrar nueva mascota</h1>
+        <p class="auth-subtitle">Completa los datos principales del perfil.</p>
+
+        <form id="formMascota" class="auth-form compact">
+          <label for="nombre">NOMBRE</label>
+          <input type="text" id="nombre" placeholder="Ej: Luna" required>
+
+          <label for="especie">ESPECIE</label>
+          <select id="especie" required style="margin-bottom:15px">
+            <option value="">Seleccionar especie</option>
+            <option value="Perro">Perro</option>
+            <option value="Gato">Gato</option>
+            <option value="Conejo">Conejo</option>
+            <option value="Hámster">Hámster</option>
+            <option value="Cobayo">Cobayo</option>
+            <option value="Hurón">Hurón</option>
+            <option value="Erizo africano">Erizo africano</option>
+            <option value="Ave">Ave</option>
+            <option value="Reptil">Reptil</option>
+            <option value="Pez">Pez</option>
+            <option value="Otro">Otro</option>
+          </select>
+
+          <label for="raza">RAZA</label>
+          <input type="text" id="raza" placeholder="Ej: Mestizo" required>
+
+          <label for="fechaNacimiento">FECHA DE NACIMIENTO</label>
+          <input type="date" id="fechaNacimiento" required>
+
+          <label for="peso">PESO EN KG (OPCIONAL)</label>
+          <input type="number" id="peso" min="0" step="0.1" placeholder="Ej: 8.5">
+
+          <label for="vacunas">VACUNAS AL DÍA (OPCIONAL)</label>
+          <select id="vacunas" style="margin-bottom:15px">
+            <option value="">No informado</option>
+            <option value="Sí">Sí</option>
+            <option value="No">No</option>
+          </select>
+
+          <label for="descripcion">DESCRIPCIÓN / OBSERVACIONES (OPCIONAL)</label>
+          <textarea id="descripcion" rows="4" placeholder="Ej: Es tranquila, se lleva bien con otros animales y necesita alimento especial."></textarea>
+
+          <label for="inputFoto">FOTOGRAFÍAS DE LA MASCOTA (OPCIONAL)</label>
+          <input type="file" id="inputFoto" accept="image/*" multiple>
+          <p class="field-help">Hasta 8 fotos de máximo 10 MB cada una.</p>
+
+          <div id="preview-container" class="photo-previews"></div>
+
+          <p id="mensajeEstado" class="form-message" hidden></p>
+          <button type="submit" id="btnGuardar" class="btn btn-green" style="align-self:center">Registrar mascota</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
+  <script src="/js/config.js?v=15"></script>
+  <script src="/js/photos.js?v=12"></script>
+  <script src="/js/store-legacy.js?v=1"></script>
+  <script src="/js/store.js?v=17"></script>
+  <script src="/js/registrar-mascota.js?v=15"></script>
+</body>
+</html>

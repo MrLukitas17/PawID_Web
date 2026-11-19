@@ -1,0 +1,11 @@
+PawID - cambios integrados 20.10.26
+
+1. Nuevas mascotas creadas desde la web usan IDs compuestos solo por números.
+2. Se agregó Recuperar contraseña en el inicio de sesión. En este prototipo valida correo + teléfono registrado antes de permitir una nueva contraseña.
+3. Invitado en Mis Mascotas: se oculta + Registrar mascota y queda solo la llamada a iniciar sesión.
+4. Si un invitado abre Registrar mascota, se muestra el mismo aviso visual de acceso y se oculta el formulario hasta iniciar sesión.
+5. Tarjetas de adopción estandarizadas para mantener altura y distribución uniforme.
+6. Publicaciones de adopción admiten hasta 8 fotos y la ficha las muestra en carrusel.
+7. Incluye vercel.json para usar el mismo ZIP en Vercel.
+
+Nota: el recuperador corresponde al prototipo con la tabla usuarios existente. No usa correo automático porque el login manual actual no está implementado con Supabase Auth email/password.
